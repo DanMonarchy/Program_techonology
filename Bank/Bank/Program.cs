@@ -1,6 +1,6 @@
 ﻿namespace Bank
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -23,7 +23,13 @@
             {
                 Console.WriteLine(e.Message);
             }
-
+            InterestEarningAccount interestEarning = new("Yana", 1000m);
+            interestEarning.MakeDeposit(1000m, DateTime.UtcNow, ";)");
+            interestEarning.MakeWithdrawal(10m, DateTime.UtcNow, ";(");
+            interestEarning.PerformMonthAndTransactions();
+            Console.WriteLine(interestEarning); // auto send ToString()
+            // == Console.WriteLine(interestEarning.ToString());
+            Console.WriteLine(interestEarning.GetAccountHistory);
         }
     }
 }

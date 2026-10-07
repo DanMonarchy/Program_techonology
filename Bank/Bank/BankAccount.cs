@@ -2,7 +2,10 @@
 
 namespace Bank;
 
-internal class BankAccount
+
+// потомок класса object => можно переопределить 
+// виртуальные методы, находящиеся в object
+public class BankAccount
 { 
     static private int s_accountNuberSeed = 1000000000;
     public string Number { get; }
@@ -71,5 +74,20 @@ internal class BankAccount
         }
         return report.ToString();
     }
+    // Ключевое слово virtual позволяет в дочернем классе
+    // предоставить другую реализацию 
+    // Метода PerformMonthAndTransactions
+    public virtual void PerformMonthAndTransactions()
+    {
 
+    }
+
+    // переопределяем метод базового класса - класса object 
+    // toString возвращает строку с информацией об объекте
+    //public override string ToString()
+    //{
+    //    return $"Type:{GetType().Name}\tOwner:{Owner}\tNumber of account:{Number}\tBalance:{Balance}";
+    //}
+    public override string ToString()
+    => $"Type:{GetType().Name}\tOwner:{Owner}\tNumber of account:{Number}\tBalance:{Balance}";
 }
