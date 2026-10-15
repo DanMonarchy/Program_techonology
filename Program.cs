@@ -1,1 +1,1 @@
-﻿Console.WriteLine("Hello, RUSSIA!");
+﻿Console.WriteLine("Hello, RUSSIA, POBEDA!");
