@@ -1,7 +1,7 @@
 <p align="center">
   <img src="cover.png" alt="Cover" width="300">
 </p>
-<p align="center"># Вопросы для подготовки к сдаче</p>
+<p align="center">Добрая девочка для быстрого зачёта</p>
 
 ## Теория ООП
 
