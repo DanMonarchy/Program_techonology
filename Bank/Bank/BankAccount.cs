@@ -93,10 +93,11 @@ public class BankAccount
     /// <param name="amount">Сумма пополнения. Должна быть положительной.</param>
     /// <param name="date">Дата операции.</param>
     /// <param name="note">Комментарий к операции.</param>
+    /// <param name="operationType">Тип операции для журнала аудита.</param>
     /// <exception cref="ArgumentOutOfRangeException">
     /// Бросается, если <paramref name="amount"/> меньше или равен нулю.
     /// </exception>
-    public void MakeDeposit(decimal amount, DateTime date, string note)
+    public void MakeDeposit(decimal amount, DateTime date, string note, AuditOperationType operationType = AuditOperationType.Deposit)
     {
         if (amount <= 0)
         {
@@ -105,6 +106,7 @@ public class BankAccount
 
         var deposit = new Transaction(amount, date, note);
         _allTransactions.Add(deposit);
+        AuditLog.Instance.Write(Number, operationType, amount, date);
     }
 
     /// <summary>
@@ -127,6 +129,7 @@ public class BankAccount
         Transaction? withdrawal = new(-amount, date, note);
 
         _allTransactions.Add(withdrawal);
+        AuditLog.Instance.Write(Number, AuditOperationType.Withdrawal, amount, date);
 
         if (overdraftTransaction is not null)
             _allTransactions.Add(overdraftTransaction);
@@ -218,6 +221,41 @@ public class BankAccount
                 : 0m,
             _ => 0m
         };
+    }
+
+    /// <summary>
+    /// Переводит сумму со счёта на другой счёт.
+    /// </summary>
+    /// <param name="destination">Счёт-получатель.</param>
+    /// <param name="amount">Сумма перевода. Должна быть положительной.</param>
+    /// <param name="date">Дата операции.</param>
+    /// <param name="note">Комментарий к операции.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Бросается, если <paramref name="destination"/> не задан.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Бросается, если <paramref name="amount"/> меньше или равен нулю.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Бросается, если списание со счёта недопустимо.
+    /// </exception>
+    public void Transfer(BankAccount destination, decimal amount, DateTime date, string note)
+    {
+        ArgumentNullException.ThrowIfNull(destination);
+
+        MakeWithdrawal(amount, date, note);
+
+        try
+        {
+            destination.MakeDeposit(amount, date, note);
+        }
+        catch (InvalidOperationException)
+        {
+            // Зачисление не получилось — возвращаем деньги обратно отправителю.
+            // Откат — это тоже операция, и она тоже может не получиться.
+            MakeDeposit(amount, date, $"Rollback of failed transfer to {destination.Number}");
+            throw;
+        }
     }
 
     // Ключевое слово virtual позволяет в дочернем классе

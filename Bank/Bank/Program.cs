@@ -85,5 +85,15 @@ public class Program
         vip.MakeWithdrawal(1000m, DateTime.UtcNow, "shopping");
         Console.WriteLine($"VIP после списания 1000: {vip.Balance}");
         Console.WriteLine(vip.GetAccountHistory());
+
+        Console.WriteLine("=== Задача 3. Перевод между счетами ===");
+        decimal beforeFirst = account1.Balance;
+        decimal beforeSecond = account2.Balance;
+        account1.Transfer(account2, 500m, DateTime.UtcNow, "transfer");
+        Console.WriteLine($"Первый счёт: было {beforeFirst}, стало {account1.Balance}");
+        Console.WriteLine($"Второй счёт: было {beforeSecond}, стало {account2.Balance}");
+
+        Console.WriteLine("=== Задача 2. Журнал аудита ===");
+        Console.WriteLine(AuditLog.Instance.GetReport());
     }
 }
