@@ -66,5 +66,34 @@ public class Program
             Console.WriteLine(e.Message);
         }
         Console.WriteLine(lineOfCredit.GetAccountHistory());
+
+        Console.WriteLine("=== Задача 1. Статусы клиента ===");
+        BankAccount regular = new BankAccount("Regular", 20000m, 0, ClientStatus.Regular);
+        BankAccount premium = new BankAccount("Premium", 20000m, 0, ClientStatus.Premium);
+        BankAccount vip = new BankAccount("VIP", 20000m, 0, ClientStatus.VIP);
+
+        regular.PerformMonthAndTransactions();
+        premium.PerformMonthAndTransactions();
+        vip.PerformMonthAndTransactions();
+
+        Console.WriteLine($"Regular: было 20000, стало {regular.Balance}");
+        Console.WriteLine($"Premium: было 20000, стало {premium.Balance}");
+        Console.WriteLine($"VIP: было 20000, стало {vip.Balance}");
+        Console.WriteLine(vip.GetAccountHistory());
+
+        Console.WriteLine("=== Задача 1. Кэшбэк VIP ===");
+        vip.MakeWithdrawal(1000m, DateTime.UtcNow, "shopping");
+        Console.WriteLine($"VIP после списания 1000: {vip.Balance}");
+        Console.WriteLine(vip.GetAccountHistory());
+
+        Console.WriteLine("=== Задача 3. Перевод между счетами ===");
+        decimal beforeFirst = account1.Balance;
+        decimal beforeSecond = account2.Balance;
+        account1.Transfer(account2, 500m, DateTime.UtcNow, "transfer");
+        Console.WriteLine($"Первый счёт: было {beforeFirst}, стало {account1.Balance}");
+        Console.WriteLine($"Второй счёт: было {beforeSecond}, стало {account2.Balance}");
+
+        Console.WriteLine("=== Задача 2. Журнал аудита ===");
+        Console.WriteLine(AuditLog.Instance.GetReport());
     }
 }

@@ -15,8 +15,9 @@ public class LineOfCreditAccount : BankAccount
     /// <param name="name">Имя владельца счёта.</param>
     /// <param name="initialBalance">Начальный остаток.</param>
     /// <param name="creditLimit">Максимальный размер кредита, на который можно уйти в минус.</param>
-    public LineOfCreditAccount(string name, decimal initialBalance, decimal creditLimit)
-        : base(name, initialBalance, -creditLimit)
+    /// <param name="status">Статус клиента, влияющий на комиссии и кэшбэк.</param>
+    public LineOfCreditAccount(string name, decimal initialBalance, decimal creditLimit, ClientStatus status = ClientStatus.Regular)
+        : base(name, initialBalance, -creditLimit, status)
     {
 
     }
