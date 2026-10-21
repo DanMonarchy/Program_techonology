@@ -4,8 +4,17 @@ using System.Text;
 
 namespace Bank;
 
+/// <summary>
+/// Кредитный счёт: позволяет уходить в минус до предела кредитного лимита.
+/// </summary>
 public class LineOfCreditAccount : BankAccount
 {
+    /// <summary>
+    /// Создаёт кредитный счёт.
+    /// </summary>
+    /// <param name="name">Имя владельца счёта.</param>
+    /// <param name="initialBalance">Начальный остаток.</param>
+    /// <param name="creditLimit">Максимальный размер кредита, на который можно уйти в минус.</param>
     public LineOfCreditAccount(string name, decimal initialBalance, decimal creditLimit)
         : base(name, initialBalance, -creditLimit)
     {
