@@ -3,15 +3,18 @@ namespace GuessTheNumber.Domain;
 /// <summary>
 /// Уровень сложности: диапазон чисел и количество попыток.
 /// </summary>
-public sealed record DifficultyLevel(string Title, int MinNumber, int MaxNumber, int MaxAttempts)
+public sealed record DifficultyLevel(string Key, string Title, int MinNumber, int MaxNumber, int MaxAttempts)
 {
-    public static DifficultyLevel Easy { get; } = new("Лёгкий", 1, 50, 10);
+    public static DifficultyLevel Easy { get; } = new("easy", "Лёгкий", 1, 50, 10);
 
-    public static DifficultyLevel Medium { get; } = new("Средний", 1, 100, 8);
+    public static DifficultyLevel Medium { get; } = new("medium", "Средний", 1, 100, 8);
 
-    public static DifficultyLevel Hard { get; } = new("Сложный", 1, 500, 7);
+    public static DifficultyLevel Hard { get; } = new("hard", "Сложный", 1, 500, 7);
 
     public static IReadOnlyList<DifficultyLevel> All { get; } = new[] { Easy, Medium, Hard };
+
+    public static DifficultyLevel Custom(int minNumber, int maxNumber, int maxAttempts) =>
+        new("custom", "Своя", minNumber, maxNumber, maxAttempts);
 }
 
 /// <summary>

@@ -8,7 +8,42 @@ namespace GuessTheNumber.Presentation;
 /// </summary>
 public sealed class ConsoleGameView : IGameView, IInputReader
 {
-    public void ShowDifficultyMenu(IReadOnlyList<DifficultyLevel> levels)
+    public void ShowMainMenu(string playerName, DifficultyLevel difficulty)
+    {
+        Console.WriteLine();
+        Console.WriteLine("- Главное меню -");
+        Console.WriteLine($"Игрок: {playerName}");
+        Console.WriteLine(
+            $"Сложность: {difficulty.Title} " +
+            $"({difficulty.MinNumber}–{difficulty.MaxNumber}, попыток: {difficulty.MaxAttempts})");
+        Console.WriteLine("  1. Играть");
+        Console.WriteLine("  2. Настройки");
+        Console.WriteLine("  0. Выход");
+    }
+
+    public void ShowSettings(GameSettings settings)
+    {
+        var difficulty = settings.ResolveDifficulty();
+        var custom = settings.CreateCustomDifficulty();
+
+        Console.WriteLine();
+        Console.WriteLine("- Настройки -");
+        Console.WriteLine($"Игрок: {settings.PlayerName}");
+        Console.WriteLine($"Сложность по умолчанию: {difficulty.Title}");
+        Console.WriteLine($"Подсказки: {(settings.HintsEnabled ? "включены" : "выключены")}");
+        Console.WriteLine(
+            $"Своя сложность: {custom.MinNumber}–{custom.MaxNumber}, " +
+            $"попыток: {custom.MaxAttempts}");
+        Console.WriteLine("  1. Изменить имя");
+        Console.WriteLine("  2. Выбрать сложность");
+        Console.WriteLine("  3. Включить/выключить подсказки");
+        Console.WriteLine("  4. Настроить свою сложность");
+        Console.WriteLine("  0. Назад");
+    }
+
+    public void ShowDifficultyMenu(
+        IReadOnlyList<DifficultyLevel> levels,
+        string currentDifficultyKey)
     {
         Console.WriteLine();
         Console.WriteLine("- Выбор сложности -");
@@ -16,21 +51,23 @@ public sealed class ConsoleGameView : IGameView, IInputReader
         for (var index = 0; index < levels.Count; index++)
         {
             var level = levels[index];
+            var marker = level.Key == currentDifficultyKey ? "  <- по умолчанию" : string.Empty;
             Console.WriteLine(
                 $"  {index + 1}. {level.Title} — числа {level.MinNumber}–{level.MaxNumber}, " +
-                $"попыток: {level.MaxAttempts}");
+                $"попыток: {level.MaxAttempts}{marker}");
         }
 
-        Console.WriteLine("  0. Выход");
+        Console.WriteLine("  0. Назад");
     }
 
-    public void ShowGameStarted(DifficultyLevel difficulty)
+    public void ShowGameStarted(DifficultyLevel difficulty, bool hintsEnabled)
     {
         Console.WriteLine();
         Console.WriteLine("- Новая игра -");
         Console.WriteLine($"Сложность: {difficulty.Title}");
         Console.WriteLine($"Диапазон:  {difficulty.MinNumber}–{difficulty.MaxNumber}");
         Console.WriteLine($"Попыток:   {difficulty.MaxAttempts}");
+        Console.WriteLine($"Подсказки: {(hintsEnabled ? "включены" : "выключены")}");
         Console.WriteLine("Введите q, чтобы прервать игру.");
     }
 
