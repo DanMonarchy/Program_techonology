@@ -428,5 +428,6 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-# GuessTheNumber user settings
+# GuessTheNumber user settings and statistics
 /src/GuessTheNumber/settings.json
+/src/GuessTheNumber/statistics.json

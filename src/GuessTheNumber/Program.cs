@@ -6,14 +6,17 @@ using GuessTheNumber.Presentation;
 Console.OutputEncoding = Encoding.UTF8;
 Console.Title = "Угадай число";
 
-var settingsPath = Path.Combine(FindProjectDirectory(), "settings.json");
+var projectDirectory = FindProjectDirectory();
+var settingsPath = Path.Combine(projectDirectory, "settings.json");
+var statisticsPath = Path.Combine(projectDirectory, "statistics.json");
 
 var view = new ConsoleGameView();
 var controller = new GameController(
     new RandomNumberGenerator(),
     view,
     view,
-    new SettingsStore(settingsPath));
+    new SettingsStore(settingsPath),
+    new StatisticsStore(statisticsPath));
 
 controller.Run();
 

@@ -7,9 +7,14 @@ namespace GuessTheNumber.Application;
 /// </summary>
 public interface IGameView
 {
-    void ShowMainMenu(string playerName, DifficultyLevel difficulty);
+    void ShowMainMenu(
+        string playerName,
+        DifficultyLevel difficulty,
+        GameStatistics statistics);
 
     void ShowSettings(GameSettings settings);
+
+    void ShowStatistics(GameStatistics statistics);
 
     void ShowDifficultyMenu(IReadOnlyList<DifficultyLevel> levels, string currentDifficultyKey);
 
@@ -45,6 +50,16 @@ public interface ISettingsStore
 }
 
 /// <summary>
+/// Сохранение и загрузка статистики игр.
+/// </summary>
+public interface IStatisticsStore
+{
+    GameStatistics Load();
+
+    void Save(GameStatistics statistics);
+}
+
+/// <summary>
 /// Сценарий игры: главное меню, настройки и игровые партии.
 /// </summary>
 public sealed class GameController
@@ -53,26 +68,34 @@ public sealed class GameController
     private readonly IGameView _gameView;
     private readonly IInputReader _input;
     private readonly ISettingsStore _settingsStore;
+    private readonly IStatisticsStore _statisticsStore;
     private readonly GameSettings _settings;
+    private readonly GameStatistics _statistics;
 
     public GameController(
         INumberGenerator numberGenerator,
         IGameView gameView,
         IInputReader input,
-        ISettingsStore settingsStore)
+        ISettingsStore settingsStore,
+        IStatisticsStore statisticsStore)
     {
         _numberGenerator = numberGenerator ?? throw new ArgumentNullException(nameof(numberGenerator));
         _gameView = gameView ?? throw new ArgumentNullException(nameof(gameView));
         _input = input ?? throw new ArgumentNullException(nameof(input));
         _settingsStore = settingsStore ?? throw new ArgumentNullException(nameof(settingsStore));
+        _statisticsStore = statisticsStore ?? throw new ArgumentNullException(nameof(statisticsStore));
         _settings = _settingsStore.Load();
+        _statistics = _statisticsStore.Load();
     }
 
     public void Run()
     {
         while (true)
         {
-            _gameView.ShowMainMenu(_settings.PlayerName, _settings.ResolveDifficulty());
+            _gameView.ShowMainMenu(
+                _settings.PlayerName,
+                _settings.ResolveDifficulty(),
+                _statistics);
             var input = _input.ReadLine("Выберите пункт: ").Trim();
 
             switch (input)
@@ -83,11 +106,14 @@ public sealed class GameController
                 case "2":
                     ShowSettingsMenu();
                     break;
+                case "3":
+                    _gameView.ShowStatistics(_statistics);
+                    break;
                 case "0":
                     _gameView.ShowMessage("До свидания!");
                     return;
                 default:
-                    _gameView.ShowError("Введите 1, 2 или 0.");
+                    _gameView.ShowError("Введите 1, 2, 3 или 0.");
                     break;
             }
         }
@@ -245,7 +271,12 @@ public sealed class GameController
 
         // События игры уведомляют представление о попытках и завершении партии.
         session.GuessMade += (_, args) => _gameView.ShowGuessResult(args);
-        session.GameFinished += (_, args) => _gameView.ShowGameFinished(args);
+        session.GameFinished += (_, args) =>
+        {
+            _gameView.ShowGameFinished(args);
+            _statistics.RecordGame(args);
+            _statisticsStore.Save(_statistics);
+        };
 
         _gameView.ShowGameStarted(difficulty, _settings.HintsEnabled);
 

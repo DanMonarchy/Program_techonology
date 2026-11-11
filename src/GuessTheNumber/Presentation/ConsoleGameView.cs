@@ -8,7 +8,10 @@ namespace GuessTheNumber.Presentation;
 /// </summary>
 public sealed class ConsoleGameView : IGameView, IInputReader
 {
-    public void ShowMainMenu(string playerName, DifficultyLevel difficulty)
+    public void ShowMainMenu(
+        string playerName,
+        DifficultyLevel difficulty,
+        GameStatistics statistics)
     {
         Console.WriteLine();
         Console.WriteLine("- Главное меню -");
@@ -16,9 +19,37 @@ public sealed class ConsoleGameView : IGameView, IInputReader
         Console.WriteLine(
             $"Сложность: {difficulty.Title} " +
             $"({difficulty.MinNumber}–{difficulty.MaxNumber}, попыток: {difficulty.MaxAttempts})");
+        Console.WriteLine(
+            statistics.GamesPlayed == 0
+                ? "Статистика: пока нет сыгранных партий"
+                : $"Статистика: побед {statistics.Wins} из {statistics.GamesPlayed}");
         Console.WriteLine("  1. Играть");
         Console.WriteLine("  2. Настройки");
+        Console.WriteLine("  3. Статистика");
         Console.WriteLine("  0. Выход");
+    }
+
+    public void ShowStatistics(GameStatistics statistics)
+    {
+        Console.WriteLine();
+        Console.WriteLine("- Статистика -");
+
+        if (statistics.GamesPlayed == 0)
+        {
+            Console.WriteLine("Пока нет сыгранных партий.");
+            return;
+        }
+
+        Console.WriteLine($"Игр: {statistics.GamesPlayed}");
+        Console.WriteLine($"Побед: {statistics.Wins}");
+        Console.WriteLine($"Поражений: {statistics.Losses}");
+        Console.WriteLine($"Процент побед: {statistics.GetWinRate():0.#}%");
+        Console.WriteLine($"Среднее попыток за игру: {statistics.GetAverageAttempts():0.#}");
+
+        if (statistics.BestAttempts is not null)
+        {
+            Console.WriteLine($"Лучший результат (попыток): {statistics.BestAttempts}");
+        }
     }
 
     public void ShowSettings(GameSettings settings)
@@ -97,7 +128,9 @@ public sealed class ConsoleGameView : IGameView, IInputReader
 
         if (args.IsWon)
         {
-            Console.WriteLine($"Победа! Число {args.TargetNumber} угадано за {args.AttemptsUsed} попыток.");
+            Console.WriteLine(
+                $"Победа! Число {args.TargetNumber} угадано за {args.AttemptsUsed} " +
+                $"{AttemptsWord(args.AttemptsUsed)}.");
         }
         else
         {
@@ -105,6 +138,24 @@ public sealed class ConsoleGameView : IGameView, IInputReader
         }
 
         Console.WriteLine();
+    }
+
+    private static string AttemptsWord(int count)
+    {
+        var lastTwo = count % 100;
+        var last = count % 10;
+
+        if (lastTwo is >= 11 and <= 14)
+        {
+            return "попыток";
+        }
+
+        return last switch
+        {
+            1 => "попытку",
+            2 or 3 or 4 => "попытки",
+            _ => "попыток",
+        };
     }
 
     public void ShowHint(int lowerBound, int upperBound)
