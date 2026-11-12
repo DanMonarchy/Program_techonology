@@ -125,7 +125,7 @@ public sealed class GameController
         {
             _gameView.ShowSettings(_settings);
             var input = _input.ReadLine(
-                "1 — имя, 2 — сложность, 3 — подсказки, 4 — своя сложность, 0 — назад: ").Trim();
+                "1 — имя, 2 — сложность, 3 — подсказки, 0 — назад: ").Trim();
 
             switch (input)
             {
@@ -141,13 +141,10 @@ public sealed class GameController
                     _gameView.ShowMessage(
                         $"Подсказки {(_settings.HintsEnabled ? "включены" : "выключены")}.");
                     break;
-                case "4":
-                    ConfigureCustomDifficulty();
-                    break;
                 case "0":
                     return;
                 default:
-                    _gameView.ShowError("Введите 1–4 или 0.");
+                    _gameView.ShowError("Введите 1–3 или 0.");
                     break;
             }
         }
@@ -170,11 +167,9 @@ public sealed class GameController
 
     private void ChooseDefaultDifficulty()
     {
-        var levels = GetDifficultyLevels();
-
         while (true)
         {
-            _gameView.ShowDifficultyMenu(levels, _settings.DifficultyKey);
+            _gameView.ShowDifficultyMenu(DifficultyLevel.All, _settings.DifficultyKey);
             var input = _input.ReadLine("Выберите сложность (0 — назад): ").Trim();
 
             if (input == "0")
@@ -184,83 +179,19 @@ public sealed class GameController
 
             if (!int.TryParse(input, out var choice) ||
                 choice < 1 ||
-                choice > levels.Count)
+                choice > DifficultyLevel.All.Count)
             {
-                _gameView.ShowError($"Введите число от 1 до {levels.Count} или 0.");
+                _gameView.ShowError(
+                    $"Введите число от 1 до {DifficultyLevel.All.Count} или 0.");
                 continue;
             }
 
-            var level = levels[choice - 1];
-            if (level.Key == "custom")
-            {
-                ConfigureCustomDifficulty();
-                return;
-            }
-
+            var level = DifficultyLevel.All[choice - 1];
             _settings.DifficultyKey = level.Key;
             SaveSettings();
             _gameView.ShowMessage($"Сложность по умолчанию: {level.Title}.");
             return;
         }
-    }
-
-    private void ConfigureCustomDifficulty()
-    {
-        var min = ReadInt(
-            $"Минимальное число (Enter — {_settings.CustomMinNumber}): ",
-            _settings.CustomMinNumber,
-            1,
-            999_999);
-
-        var max = ReadInt(
-            $"Максимальное число (Enter — {Math.Max(_settings.CustomMaxNumber, min + 1)}): ",
-            Math.Max(_settings.CustomMaxNumber, min + 1),
-            min + 1,
-            1_000_000);
-
-        var attempts = ReadInt(
-            $"Количество попыток (Enter — {_settings.CustomMaxAttempts}): ",
-            _settings.CustomMaxAttempts,
-            1,
-            100);
-
-        _settings.CustomMinNumber = min;
-        _settings.CustomMaxNumber = max;
-        _settings.CustomMaxAttempts = attempts;
-        _settings.DifficultyKey = "custom";
-        SaveSettings();
-        _gameView.ShowMessage($"Своя сложность: {min}–{max}, попыток: {attempts}.");
-    }
-
-    private int ReadInt(string prompt, int defaultValue, int minValue, int maxValue)
-    {
-        while (true)
-        {
-            var input = _input.ReadLine(prompt).Trim();
-            if (input.Length == 0)
-            {
-                return defaultValue;
-            }
-
-            if (int.TryParse(input, out var value) &&
-                value >= minValue &&
-                value <= maxValue)
-            {
-                return value;
-            }
-
-            _gameView.ShowError($"Введите число от {minValue} до {maxValue}.");
-        }
-    }
-
-    private List<DifficultyLevel> GetDifficultyLevels()
-    {
-        var levels = new List<DifficultyLevel>(DifficultyLevel.All)
-        {
-            _settings.CreateCustomDifficulty(),
-        };
-
-        return levels;
     }
 
     private void SaveSettings() => _settingsStore.Save(_settings);

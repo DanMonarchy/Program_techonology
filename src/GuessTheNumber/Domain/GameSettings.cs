@@ -11,12 +11,6 @@ public sealed class GameSettings
 
     public bool HintsEnabled { get; set; } = true;
 
-    public int CustomMinNumber { get; set; } = 1;
-
-    public int CustomMaxNumber { get; set; } = 1000;
-
-    public int CustomMaxAttempts { get; set; } = 10;
-
     /// <summary>
     /// Возвращает сложность, выбранную пользователем по умолчанию.
     /// </summary>
@@ -26,16 +20,7 @@ public sealed class GameSettings
         {
             "easy" => DifficultyLevel.Easy,
             "hard" => DifficultyLevel.Hard,
-            "custom" => CreateCustomDifficulty(),
             _ => DifficultyLevel.Medium,
         };
-    }
-
-    /// <summary>
-    /// Создаёт уровень «Своя сложность» из сохранённых параметров.
-    /// </summary>
-    public DifficultyLevel CreateCustomDifficulty()
-    {
-        return DifficultyLevel.Custom(CustomMinNumber, CustomMaxNumber, CustomMaxAttempts);
     }
 }

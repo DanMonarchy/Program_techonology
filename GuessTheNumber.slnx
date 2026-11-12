@@ -2,4 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/GuessTheNumber/GuessTheNumber.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GuessTheNumber.Tests/GuessTheNumber.Tests.csproj" />
+  </Folder>
 </Solution>

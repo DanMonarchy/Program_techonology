@@ -14,7 +14,7 @@ public sealed class ConsoleGameView : IGameView, IInputReader
         GameStatistics statistics)
     {
         Console.WriteLine();
-        Console.WriteLine("- Главное меню -");
+        WriteLineColored("- Главное меню -", ConsoleColor.Green);
         Console.WriteLine($"Игрок: {playerName}");
         Console.WriteLine(
             $"Сложность: {difficulty.Title} " +
@@ -23,10 +23,10 @@ public sealed class ConsoleGameView : IGameView, IInputReader
             statistics.GamesPlayed == 0
                 ? "Статистика: пока нет сыгранных партий"
                 : $"Статистика: побед {statistics.Wins} из {statistics.GamesPlayed}");
-        Console.WriteLine("  1. Играть");
-        Console.WriteLine("  2. Настройки");
-        Console.WriteLine("  3. Статистика");
-        Console.WriteLine("  0. Выход");
+        WriteLineColored("  1. Играть", ConsoleColor.Green);
+        WriteLineColored("  2. Настройки", ConsoleColor.Green);
+        WriteLineColored("  3. Статистика", ConsoleColor.Green);
+        WriteLineColored("  0. Выход", ConsoleColor.DarkGray);
     }
 
     public void ShowStatistics(GameStatistics statistics)
@@ -55,20 +55,15 @@ public sealed class ConsoleGameView : IGameView, IInputReader
     public void ShowSettings(GameSettings settings)
     {
         var difficulty = settings.ResolveDifficulty();
-        var custom = settings.CreateCustomDifficulty();
 
         Console.WriteLine();
         Console.WriteLine("- Настройки -");
         Console.WriteLine($"Игрок: {settings.PlayerName}");
         Console.WriteLine($"Сложность по умолчанию: {difficulty.Title}");
         Console.WriteLine($"Подсказки: {(settings.HintsEnabled ? "включены" : "выключены")}");
-        Console.WriteLine(
-            $"Своя сложность: {custom.MinNumber}–{custom.MaxNumber}, " +
-            $"попыток: {custom.MaxAttempts}");
         Console.WriteLine("  1. Изменить имя");
         Console.WriteLine("  2. Выбрать сложность");
         Console.WriteLine("  3. Включить/выключить подсказки");
-        Console.WriteLine("  4. Настроить свою сложность");
         Console.WriteLine("  0. Назад");
     }
 
@@ -94,7 +89,7 @@ public sealed class ConsoleGameView : IGameView, IInputReader
     public void ShowGameStarted(DifficultyLevel difficulty, bool hintsEnabled)
     {
         Console.WriteLine();
-        Console.WriteLine("- Новая игра -");
+        WriteLineColored("- Новая игра -", ConsoleColor.Green);
         Console.WriteLine($"Сложность: {difficulty.Title}");
         Console.WriteLine($"Диапазон:  {difficulty.MinNumber}–{difficulty.MaxNumber}");
         Console.WriteLine($"Попыток:   {difficulty.MaxAttempts}");
@@ -138,6 +133,21 @@ public sealed class ConsoleGameView : IGameView, IInputReader
         }
 
         Console.WriteLine();
+    }
+
+    private static void WriteLineColored(string text, ConsoleColor color)
+    {
+        var previousColor = Console.ForegroundColor;
+        Console.ForegroundColor = color;
+
+        try
+        {
+            Console.WriteLine(text);
+        }
+        finally
+        {
+            Console.ForegroundColor = previousColor;
+        }
     }
 
     private static string AttemptsWord(int count)

@@ -12,9 +12,6 @@ public sealed record DifficultyLevel(string Key, string Title, int MinNumber, in
     public static DifficultyLevel Hard { get; } = new("hard", "Сложный", 1, 500, 7);
 
     public static IReadOnlyList<DifficultyLevel> All { get; } = new[] { Easy, Medium, Hard };
-
-    public static DifficultyLevel Custom(int minNumber, int maxNumber, int maxAttempts) =>
-        new("custom", "Своя", minNumber, maxNumber, maxAttempts);
 }
 
 /// <summary>
