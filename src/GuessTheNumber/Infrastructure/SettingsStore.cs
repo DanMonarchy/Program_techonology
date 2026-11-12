@@ -4,7 +4,7 @@ using GuessTheNumber.Domain;
 namespace GuessTheNumber.Infrastructure;
 
 /// <summary>
-/// Сохраняет настройки в JSON-файл и загружает их при запуске.
+/// Сохраняет настройки в JSON-файл, загружает их при запуске.
 /// </summary>
 public sealed class SettingsStore : ISettingsStore
 {
