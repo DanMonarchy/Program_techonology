@@ -38,13 +38,13 @@ src/GuessTheNumber
 
 ### Принципы SOLID
 
-| Принцип | Где реализован |
+| Принцип | Реализация|
 |---|---|
-| **S** — единственная ответственность | `GameSession` отвечает за правила партии, `ConsoleGameView` — за ввод/вывод, хранилища — за JSON-файлы. |
-| **O** — открытость/закрытость | Новый уровень сложности добавляется в `DifficultyLevel`, не меняя `GameSession`; новые подписчики подключаются к событиям без изменения издателя. |
-| **L** — подстановка Барбары Лисков | Любая реализация `INumberGenerator`, `ISettingsStore` и `IStatisticsStore` взаимозаменяема. |
-| **I** — разделение интерфейсов | Используются отдельные `IGameView`, `IInputReader`, `ISettingsStore` и `IStatisticsStore`. |
-| **D** — инверсия зависимостей | `GameController` зависит от абстракций, конкретные классы создаются в `Program.cs`. |
+| **S**  | `GameSession` отвечает за правила партии, `ConsoleGameView` — за ввод/вывод, хранилища — за JSON-файлы. |
+| **O**  | Новый уровень сложности добавляется в `DifficultyLevel`, не меняя `GameSession`; новые подписчики подключаются к событиям без изменения издателя. |
+| **L**  | Любая реализация `INumberGenerator`, `ISettingsStore` и `IStatisticsStore` взаимозаменяема. |
+| **I**  | Используются отдельные `IGameView`, `IInputReader`, `ISettingsStore` и `IStatisticsStore`. |
+| **D**  | `GameController` зависит от абстракций, конкретные классы создаются в `Program.cs`. |
 
 ### События
 
