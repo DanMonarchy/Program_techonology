@@ -18,8 +18,6 @@ dotnet run --project src/GuessTheNumber
 ```powershell
 dotnet test
 ```
-
-
 ## Где хранятся данные
 
 ```text
